@@ -21,7 +21,9 @@ def generate_log():
     
     if is_threat:
         # THE ATTACK SCENARIO
-        user_id = "User_9982_VIP" # High Value Target
+        # Randomize Target to avoid "Why is he back if frozen?" logic hole
+        target_pool = ["User_9982_VIP", "Admin_Root", "Finance_Lead", "HR_Director", "DevOps_Lead"]
+        user_id = random.choice(target_pool)
         loc = LOCATIONS[3] # Moscow (Suspicious)
         device = "Linux (Kali)" # Hacker OS
         action = "CRITICAL_ALERT"
