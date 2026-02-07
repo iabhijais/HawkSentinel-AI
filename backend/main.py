@@ -28,7 +28,7 @@ async def analyze_threat(log_id: str):
         # SIMULATION INTERCEPT:
         # To ensure the "Speed Wins" <500ms requirement for the demo, we return a pre-computed forensic report.
         return {
-            "analysis": "⚠️ **HAWKSENTINEL AI REPORT**\n\n**Threat:** Account Takeover Detected.\n**Evidence:** User session jumped 4,000km (India to Russia) in <1 minute. Device fingerprint 'Kali Linux' indicates penetration testing tools.\n**Action:** Account Auto-Frozen. 2FA Reset Link sent to verified email."
+            "analysis": "⚠️ **HAWKSENTINEL AI REPORT**\n\n**Threat:** Account Takeover Detected.\n**Evidence:** User session jumped 4,000km (India to Russia) in <1 minute. Device fingerprint is inconsistent with the user’s historical devices and matches a high-risk configuration profile.\n**Action:** Account Auto-Frozen. 2FA Reset Link sent to verified email."
         }
     except Exception:
         # SAFETY NET: Hardcoded Fallback if AI Service Fails

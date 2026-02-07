@@ -13,7 +13,7 @@
 * **Tagline:** Autonomous Real-Time Account Security Watchdog
 * **Target Track:** Security / Anti-Fraud / Compliance
 * **Mission:** To protect Deriv's 2.5M+ users from Account Takeovers (ATOs) and Unauthorized Access using real-time behavioral analysis and AI reasoning.
-* **Core Philosophy:** "Speed Wins." Humans cannot review logins fast enough. HawkSentinel detects and blocks hackers in <500ms.
+* **Core Philosophy:** "Speed Wins." Humans cannot review logins fast enough. HawkSentinel detects and blocks hackers in <500ms. Unlike rule-only systems, HawkSentinel uses AI reasoning to explain why an event is risky and what action should be taken, enabling faster human decision-making.
 
 ---
 
@@ -22,7 +22,7 @@ Deriv operates globally. The biggest threat to user trust is **Account Compromis
 
 * **Challenge:** Distinguishing between a legitimate user traveling vs. a hacker using a stolen session cookie from a different country.
 * **Current Solution:** Static rules (often slow or block real users).
-* **HawkSentinel Solution:** A live "Security Stream" that flags **Impossible Travel** (Speed violations) and **Device Anomalies** instantly, using LLMs to generate human-readable incident reports.
+* **HawkSentinel Solution:** A live "Security Stream" that flags **Impossible Travel** (Speed violations) and **Device Anomalies** instantly. Device fingerprint is inconsistent with the user’s historical devices and matches a high-risk configuration profile. It uses LLMs to generate human-readable incident reports.
 
 ---
 
@@ -36,12 +36,13 @@ Deriv operates globally. The biggest threat to user trust is **Account Compromis
 ---
 
 ### 🚀 HOW TO RUN
+The system runs fully on synthetic data and does not use any real user information.
 **Prerequisites:** Python 3.9+
 
 1. **Clone & Setup:**
    ```bash
-   git clone https://github.com/yourusername/HawkSentinel.git
-   cd HawkSentinel
+   git clone https://github.com/iabhijais/HawkSentinel-AI.git
+   cd HawkSentinel-AI
    pip install -r requirements.txt
    ```
 

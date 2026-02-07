@@ -72,7 +72,7 @@ def get_ai_analysis(log):
     
     **AI Evidence:** 
     1. **Impossible Travel:** User session jumped 4,000km to {log['location']} in < 5 seconds.
-    2. **Device Fingerprint:** '{log['device']}' matches known penetration testing tools.
+    2. **Device Fingerprint:** Device fingerprint is inconsistent with the user’s historical devices and matches a high-risk configuration profile.
     3. **Behavioral Anomaly:** Login pattern deviates 99.8% from user baseline.
     
     **Autonomous Action:** 
