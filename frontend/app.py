@@ -63,11 +63,19 @@ def generate_log_internal():
         target_pool = ["User_9982_VIP", "Admin_Root", "Finance_Lead", "HR_Director", "DevOps_Lead"]
         user_id = random.choice(target_pool)
         
-        loc = LOCATIONS[3] # Moscow
-        device = "Linux (Kali)"
+        # SCENARIO LOTTERY: Pick a random attack type
+        scenario = random.choice([
+            {"city": "Moscow", "country": "Russia", "device": "Linux (Kali)", "desc": "Impossible Travel: Mumbai -> Moscow in 5s"},
+            {"city": "Beijing", "country": "China", "device": "Unknown Android", "desc": "Impossible Travel: USA -> Beijing in 2s"},
+            {"city": "Pyongyang", "country": "North Korea", "device": "Tor Browser", "desc": "Blacklisted Geolocation Access Detected"},
+            {"city": "Lagos", "country": "Nigeria", "device": "Windows XP", "desc": "Legacy OS + High Velocity Traffic"}
+        ])
+        
+        loc = {"city": scenario["city"], "country": scenario["country"], "ip": "192.168.x.x"} # IP is fake
+        device = scenario["device"]
         action = "CRITICAL_ALERT"
         risk_score = random.randint(90, 99)
-        desc = f"Impossible Travel: Mumbai -> Moscow in 5s"
+        desc = scenario["desc"]
     else:
         # NORMAL USER
         user_id = f"User_{random.randint(1000, 1050)}"
