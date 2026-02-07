@@ -150,6 +150,12 @@ st.markdown("""
         transition: all 0.5s ease;
     }
     
+    /* Reduce Top Padding */
+    .main .block-container {
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+    }
+
     /* Custom Red Alert for Hackers */
     .stAlert {
         background-color: #2a0a0a !important;
