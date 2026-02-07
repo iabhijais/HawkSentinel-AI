@@ -2,11 +2,24 @@ import streamlit as st
 import pandas as pd
 import time
 import random
+import os
 from datetime import datetime
 
 # ==========================================
 # 1. INTERNAL BACKEND ENGINE (Merged for Cloud)
 # ==========================================
+
+# Robust Image Loader
+def get_image_path(filename):
+    # Check current directory
+    if os.path.exists(filename):
+        return filename
+    # Check frontend directory (if running from root)
+    if os.path.exists(f"frontend/{filename}"):
+        return f"frontend/{filename}"
+    return None
+
+logo_path = get_image_path("logo.png")
 
 # Fake Locations & IPs
 LOCATIONS = [
@@ -61,7 +74,12 @@ def get_ai_analysis_internal(log_id):
 # 2. STREAMLIT DASHBOARD UI
 # ==========================================
 
-st.set_page_config(page_title="HawkSentinel AI", page_icon="🦅", layout="wide")
+# Page Config with Favicon
+if logo_path:
+    st.set_page_config(page_title="HawkSentinel AI", page_icon=logo_path, layout="wide")
+else:
+    st.set_page_config(page_title="HawkSentinel AI", page_icon="🦅", layout="wide")
+
 
 # Initialize Session State (To store history without a database)
 if 'history' not in st.session_state:
@@ -95,9 +113,9 @@ st.markdown("""
 
 # SIDEBAR COMMAND CENTER
 with st.sidebar:
-    try:
-        st.image("logo.png", use_container_width=True)
-    except:
+    if logo_path:
+        st.image(logo_path, use_container_width=True)
+    else:
         st.header("🦅 Command Center")
         
     st.success("• SYSTEM ONLINE")
@@ -110,9 +128,13 @@ with st.sidebar:
     st.progress(12, text="Threat Load")
 
 # MAIN HEADER
-col1, col2 = st.columns([1, 10])
+col1, col2 = st.columns([1.5, 8.5])
 with col1:
-    st.header("🛡️")
+    if logo_path:
+        st.image(logo_path, use_container_width=True)
+    else:
+        st.header("🛡️")
+
 with col2:
     st.title("HawkSentinel AI")
     st.caption("Autonomous Real-Time Account Security Watchdog")
