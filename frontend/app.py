@@ -59,12 +59,15 @@ def generate_log_internal():
     
     if is_threat:
         # THE ATTACK SCENARIO
-        user_id = "User_9982_VIP"
+        # Randomize Target to avoid "Why is he back if frozen?" logic hole
+        target_pool = ["User_9982_VIP", "Admin_Root", "Finance_Lead", "HR_Director", "DevOps_Lead"]
+        user_id = random.choice(target_pool)
+        
         loc = LOCATIONS[3] # Moscow
         device = "Linux (Kali)"
         action = "CRITICAL_ALERT"
         risk_score = random.randint(90, 99)
-        desc = "Impossible Travel: Mumbai -> Moscow in 5s"
+        desc = f"Impossible Travel: Mumbai -> Moscow in 5s"
     else:
         # NORMAL USER
         user_id = f"User_{random.randint(1000, 1050)}"
