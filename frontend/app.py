@@ -68,7 +68,7 @@ def generate_log_internal():
             {"city": "Moscow", "country": "Russia", "device": "Linux (Kali)", "desc": "Impossible Travel: Mumbai -> Moscow in 5s"},
             {"city": "Beijing", "country": "China", "device": "Unknown Android", "desc": "Impossible Travel: USA -> Beijing in 2s"},
             {"city": "Pyongyang", "country": "North Korea", "device": "Tor Browser", "desc": "Blacklisted Geolocation Access Detected"},
-            {"city": "Lagos", "country": "Nigeria", "device": "Windows XP", "desc": "Legacy OS + High Velocity Traffic"}
+            {"city": "Amsterdam", "country": "Netherlands", "device": "Datacenter Proxy", "desc": "Anonymous Cloud IP Detected - Potential Bot"}
         ])
         
         loc = {"city": scenario["city"], "country": scenario["country"], "ip": "192.168.x.x"} # IP is fake
@@ -97,8 +97,21 @@ def generate_log_internal():
         "details": desc
     }
 
-def get_ai_analysis_internal(log_id):
-    return "⚠️ **HAWKSENTINEL AI FORENSIC REPORT**\n\n**Threat Identified:** Account Takeover Attempt.\n**Evidence:** User session jumped 4,000km (India to Russia) in <1 minute. Device fingerprint is inconsistent with the user’s historical devices and matches a high-risk configuration profile.\n**Action Taken:** Account Auto-Frozen. 2FA Reset Link sent to verified email."
+def get_ai_analysis_internal(log):
+    """Dynamically generates the AI report based on the specific threat scenario"""
+    return f"""⚠️ **HAWKSENTINEL AI FORENSIC REPORT**
+    
+**Target:** {log['user']}
+**Threat Scenario:** {log['details']}
+**AI Assessment:**
+* **Trigger:** Unusual activity detected from {log['location']} using {log['device']}.
+* **Context:** {log['details']} This pattern matches known Account Takeover (ATO) signatures.
+* **Risk Score:** {log['risk_score']}% (Critical)
+
+**Autonomous Action:**
+✅ Account Auto-Frozen
+✅ Session Terminated
+✅ 2FA Reset Link Sent"""
 
 # --- LOGIC UPDATE CYCLE ---
 new_log = generate_log_internal()
@@ -210,7 +223,7 @@ if is_alert_mode:
     
     # The "AI Explanation" Dropdown - Expanded by default on alert
     with st.expander("💀 READ AI FORENSIC REPORT", expanded=True):
-        st.warning(get_ai_analysis_internal(new_log['id']))
+        st.warning(get_ai_analysis_internal(new_log))
 
 # DATA TABLE
 df = pd.DataFrame(st.session_state.history)
