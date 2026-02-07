@@ -6,20 +6,39 @@ import os
 from datetime import datetime
 
 # ==========================================
-# 1. INTERNAL BACKEND ENGINE (Merged for Cloud)
+# 1. SETUP & UTILS
 # ==========================================
 
 # Robust Image Loader
 def get_image_path(filename):
-    # Check current directory
     if os.path.exists(filename):
         return filename
-    # Check frontend directory (if running from root)
     if os.path.exists(f"frontend/{filename}"):
         return f"frontend/{filename}"
     return None
 
 logo_path = get_image_path("logo.png")
+
+# Page Config
+if logo_path:
+    st.set_page_config(page_title="HawkSentinel AI", page_icon=logo_path, layout="wide")
+else:
+    st.set_page_config(page_title="HawkSentinel AI", page_icon="🦅", layout="wide")
+
+# ==========================================
+# 2. SESSION STATE & METRICS (The "Brain")
+# ==========================================
+
+if 'history' not in st.session_state:
+    st.session_state.history = []
+
+if 'metrics' not in st.session_state:
+    st.session_state.metrics = {
+        "active_sessions": 2401922,
+        "threats": 42,
+        "latency": 38,
+        "latency_delta": -12
+    }
 
 # Fake Locations & IPs
 LOCATIONS = [
@@ -34,6 +53,7 @@ DEVICES = ["Windows 11", "MacBook Pro", "iPhone 15", "Linux (Kali)", "Unknown An
 
 def generate_log_internal():
     """Simulates the backend generator logic directly inside Streamlit"""
+    # 15% Chance of Threat
     is_threat = random.random() > 0.85
     timestamp = datetime.now().strftime("%H:%M:%S")
     
@@ -67,29 +87,32 @@ def generate_log_internal():
     }
 
 def get_ai_analysis_internal(log_id):
-    """Simulates the AI Analysis API"""
     return "⚠️ **HAWKSENTINEL AI FORENSIC REPORT**\n\n**Threat Identified:** Account Takeover Attempt.\n**Evidence:** User session jumped 4,000km (India to Russia) in <1 minute. Device fingerprint is inconsistent with the user’s historical devices and matches a high-risk configuration profile.\n**Action Taken:** Account Auto-Frozen. 2FA Reset Link sent to verified email."
 
-# ==========================================
-# 2. STREAMLIT DASHBOARD UI
-# ==========================================
-
-# Page Config with Favicon
-if logo_path:
-    st.set_page_config(page_title="HawkSentinel AI", page_icon=logo_path, layout="wide")
-else:
-    st.set_page_config(page_title="HawkSentinel AI", page_icon="🦅", layout="wide")
-
-
-# Initialize Session State (To store history without a database)
-if 'history' not in st.session_state:
-    st.session_state.history = []
-
-# Generate a new log on every refresh
+# --- LOGIC UPDATE CYCLE ---
 new_log = generate_log_internal()
 st.session_state.history.insert(0, new_log)
 if len(st.session_state.history) > 50:
     st.session_state.history.pop()
+
+# Dynamic Metrics Calculation
+session_jitter = random.randint(-400, 800) # Mostly up, sometimes down
+st.session_state.metrics['active_sessions'] += session_jitter
+
+new_latency = random.randint(32, 45)
+st.session_state.metrics['latency_delta'] = new_latency - st.session_state.metrics['latency']
+st.session_state.metrics['latency'] = new_latency
+
+threat_delta = 0
+is_alert_mode = False
+if new_log['risk_score'] > 90:
+    st.session_state.metrics['threats'] += 1
+    threat_delta = 1
+    is_alert_mode = True
+
+# ==========================================
+# 3. DASHBOARD UI
+# ==========================================
 
 # HACKER STYLE CSS
 st.markdown("""
@@ -100,6 +123,7 @@ st.markdown("""
         border: 1px solid #333;
         padding: 10px;
         border-radius: 5px;
+        transition: all 0.5s ease;
     }
     
     /* Custom Red Alert for Hackers */
@@ -111,7 +135,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# SIDEBAR COMMAND CENTER
+# SIDEBAR
 with st.sidebar:
     if logo_path:
         st.image(logo_path, use_container_width=True)
@@ -139,11 +163,29 @@ with col2:
     st.title("HawkSentinel AI")
     st.caption("Autonomous Real-Time Account Security Watchdog")
 
-# METRICS
+# METRICS ROW (Now Dynamic)
 m1, m2, m3, m4 = st.columns(4)
-m1.metric("Active Sessions", "2,401,922", "+1.2%")
-m2.metric("Threats Neutralized", "42", "+4 this hour")
-m3.metric("System Latency", "38ms", "-12ms")
+
+m1.metric(
+    "Active Sessions", 
+    f"{st.session_state.metrics['active_sessions']:,}", 
+    f"{session_jitter:+d}"
+)
+
+m2.metric(
+    "Threats Neutralized", 
+    f"{st.session_state.metrics['threats']}", 
+    f"+{threat_delta} Just Now" if threat_delta > 0 else "Stable",
+    delta_color="off" if threat_delta == 0 else "inverse"
+)
+
+m3.metric(
+    "System Latency", 
+    f"{st.session_state.metrics['latency']}ms", 
+    f"{st.session_state.metrics['latency_delta']}ms",
+    delta_color="inverse"
+)
+
 m4.metric("AI Confidence", "99.9%", "Stable")
 
 st.write("") # Spacer
@@ -152,17 +194,17 @@ st.write("") # Spacer
 st.subheader("📡 Live Global Traffic Stream")
 
 # 🚨 THREAT ALERT LOGIC
-if new_log['risk_score'] > 90:
+if is_alert_mode:
     st.error(f"🚨 CRITICAL_ALERT: {new_log['user']} | {new_log['details']}")
     
-    # The "AI Explanation" Dropdown
+    # The "AI Explanation" Dropdown - Expanded by default on alert
     with st.expander("💀 READ AI FORENSIC REPORT", expanded=True):
         st.warning(get_ai_analysis_internal(new_log['id']))
 
 # DATA TABLE
 df = pd.DataFrame(st.session_state.history)
 
-# Visual Configuration for the Table (Conditional Formatting)
+# Visual Configuration
 def highlight_risk(row):
     return ['background-color: #2a0a0a; color: #ffeb3b; font-weight: bold' if row['risk_score'] > 90 else '' for _ in row]
 
@@ -184,6 +226,16 @@ st.dataframe(
     }
 )
 
-# Auto-refresh logic (Trick to keep the stream alive)
-time.sleep(1)
+# ==========================================
+# 4. INTELLIGENT REFRESH (The Fix)
+# ==========================================
+
+if is_alert_mode:
+    # FREEZE FOR 8 SECONDS if there is an alert
+    # This gives you time to explain the alert in the video
+    time.sleep(8)
+else:
+    # Fast refresh for normal traffic
+    time.sleep(0.8)
+
 st.rerun()
